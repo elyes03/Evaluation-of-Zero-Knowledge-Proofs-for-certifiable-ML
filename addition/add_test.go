@@ -47,18 +47,3 @@ func BenchmarkAddCircuit(b *testing.B) {
 
 	}
 }
-
-/*func TinyOperation(a, b uint64) uint64 {
-	return a * b
-}
-
-var result uint64
-
-func BenchmarkTinyOperation(b *testing.B) {
-	var s uint64
-	for i := 0; i < b.N; i++ {
-		TinyOperation(1, 2)
-	}
-	result = s
-
-}*/

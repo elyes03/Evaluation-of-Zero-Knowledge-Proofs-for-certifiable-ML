@@ -18,7 +18,7 @@ func BenchmarkMaxCircuit(b *testing.B) {
 		pk, vk, err := groth16.Setup(ccs)
 
 		// witness definition
-		assignment := MaxCircuit{X: 4, Y: 4, Z: 4}
+		assignment := MaxCircuit{X: 3, Y: 4, Z: 4}
 		witness, err := frontend.NewWitness(&assignment, ecc.BN254.ScalarField())
 		publicWitness, err := witness.Public()
 
@@ -30,22 +30,3 @@ func BenchmarkMaxCircuit(b *testing.B) {
 		}
 	}
 }
-
-/*func MaxOperation(a, b uint64) uint64 {
-	if a > b {
-		return a
-	} else {
-		return b
-	}
-}
-
-var result uint64
-
-func BenchmarkMaxOperation(b *testing.B) {
-	var s uint64
-	for i := 0; i < b.N; i++ {
-		MaxOperation(1, 2)
-	}
-	result = s
-
-}*/

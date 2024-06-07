@@ -14,14 +14,10 @@ import (
 	"github.com/petar/GoMNIST"
 )
 
-// CubicCircuit defines a simple circuit
-// x**3 + x + 5 == y
 type ConvCircuit struct {
-	// struct tags on a variable is optional
-	// default uses variable name and secret visibility.
 	X [784]frontend.Variable `gnark:"x"`
-	Y [4]frontend.Variable   `gnark:"y"`       // x  --> secret visibility (default)
-	Z frontend.Variable      `gnark:",public"` // Y  --> public visibility
+	Y [4]frontend.Variable   `gnark:"y"`
+	Z frontend.Variable      `gnark:",public"`
 }
 
 // Define declares the circuit constraints
@@ -38,16 +34,7 @@ func (circuit *ConvCircuit) Define(api frontend.API) error {
 			sum10 = api.Add(sum10, sum)
 		}
 	}
-	/*for i := 0; i < 2; i++ {
-		var sum frontend.Variable = 0
 
-		sum = api.Add(api.Mul(circuit.X[8+2*i], circuit.Y[0]), api.Mul(circuit.X[9+2*i], circuit.Y[1]),
-			api.Mul(circuit.X[12+2*i], circuit.Y[2]), api.Mul(circuit.X[13+2*i], circuit.Y[3]))
-
-		result[2+i] = sum
-		sum10 = api.Add(sum10, sum)
-
-	}*/
 	api.AssertIsEqual(circuit.Z, sum10)
 
 	return nil

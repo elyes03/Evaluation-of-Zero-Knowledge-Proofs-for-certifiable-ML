@@ -44,39 +44,22 @@ func (sfa *SecureFixPointArithmetic) SecureAddition(a, b *big.Int) *big.Int {
 type AddCircuit struct {
 	// struct tags on a variable is optional
 	// default uses variable name and secret visibility.
-	X [2][2]frontend.Variable `gnark:"x"`
-	Y [2][2]frontend.Variable `gnark:"y"`       // x  --> secret visibility (default)
-	Z frontend.Variable       `gnark:",public"` // Y  --> public visibility
+	X frontend.Variable `gnark:"x"`
+	Y frontend.Variable `gnark:"y"`       // x  --> secret visibility (default)
+	Z frontend.Variable `gnark:",public"` // Y  --> public visibility
 }
 
 // Define declares the circuit constraints
 func (circuit *AddCircuit) Define(api frontend.API) error {
 	var result frontend.Variable
-	for i := range 2 {
-		for j := range 2 {
-			result = api.Add(result, circuit.X[i][j], circuit.Y[i][j])
-		}
-	}
+
+	result = api.Add(circuit.X, circuit.Y)
+
 	api.AssertIsEqual(circuit.Z, result)
 	return nil
 }
 
 func main() {
-	/*q, _ := new(big.Int).SetString("115792089237316195423570985008687907853269984665640564039457584007913129639747", 10)
-	sfa := NewSecureFixPointArithmetic(q, 2, 10, 128)
-
-	// Example numbers
-	a := 10.54
-	b := 3.71
-
-	// Representation
-	repA := sfa.Representation(a)
-	repB := sfa.Representation(b)
-
-	fmt.Println(repA, repB)*/
-
-	// Secure operations
-	//sum := sfa.SecureAddition(repA, repB)
 
 	// compiles our circuit into a R1CS
 	var circuit AddCircuit
@@ -87,32 +70,13 @@ func main() {
 
 	// witness definition
 	var assignment AddCircuit
-	for i := range 2 {
-		for j := range 2 {
-			assignment.X[i][j] = 1
-		}
-	}
-	for i := range 2 {
-		for j := range 2 {
-			assignment.Y[i][j] = 2
-		}
-	}
 
-	assignment.Z = 12
-	/*assignment.X[0][0] = frontend.Variable(1)
-	assignment.X[0][1] = frontend.Variable(2)
-	assignment.X[1][0] = frontend.Variable(2)
-	assignment.X[1][1] = frontend.Variable(1)
+	assignment.X = 1
 
-	assignment.Y[0][0] = frontend.Variable(1)
-	assignment.Y[0][1] = frontend.Variable(1)
-	assignment.Y[1][0] = frontend.Variable(1)
-	assignment.Y[1][1] = frontend.Variable(1)
+	assignment.Y = 2
 
-	assignment.Z[0][0] = frontend.Variable(2)
-	assignment.Z[0][1] = frontend.Variable(3)
-	assignment.Z[1][0] = frontend.Variable(3)
-	assignment.Z[1][1] = frontend.Variable(2)*/
+	assignment.Z = 3
+
 	witness, err := frontend.NewWitness(&assignment, ecc.BN254.ScalarField())
 	publicWitness, err := witness.Public()
 

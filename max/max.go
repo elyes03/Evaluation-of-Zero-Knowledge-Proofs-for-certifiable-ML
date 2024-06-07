@@ -12,32 +12,17 @@ import (
 	"github.com/consensys/gnark/std/math/cmp"
 )
 
-// CubicCircuit defines a simple circuit
-// x**3 + x + 5 == y
 type MaxCircuit struct {
-	// struct tags on a variable is optional
-	// default uses variable name and secret visibility.
 	X frontend.Variable `gnark:"x"`
 	Y frontend.Variable `gnark:"y"`       // x  --> secret visibility (default)
 	Z frontend.Variable `gnark:",public"` // Y  --> public visibility
 }
 
-// Define declares the circuit constraints
 func (circuit *MaxCircuit) Define(api frontend.API) error {
-	//fmt.Println(api.Cmp(circuit.X, circuit.Y))
+
 	cmp16bit := cmp.NewBoundedComparator(api, big.NewInt(1<<16-1), false)
 	x := cmp16bit.Min(api.Neg(circuit.X), api.Neg(circuit.Y))
-	//fmt.Println(x)
 	api.AssertIsEqual(api.Neg(x), circuit.Z)
-	v := api.Select(cmp16bit.IsLess(6, 5), 1, 0)
-	fmt.Println(v)
-	api.AssertIsEqual(v, 0)
-
-	/*if api.Cmp(api.Neg(circuit.X), api.Neg(circuit.Y) == frontend.Variable(1) {
-		api.Println("hhh", one)
-	} else {
-		api.Println(api.Add(api.Cmp(circuit.X, circuit.Y), 1))
-	}*/
 
 	return nil
 }
@@ -52,7 +37,7 @@ func main() {
 	pk, vk, err := groth16.Setup(ccs)
 
 	// witness definition
-	assignment := MaxCircuit{X: 1000, Y: 22, Z: 1000}
+	assignment := MaxCircuit{X: 2, Y: 23, Z: 23}
 	witness, err := frontend.NewWitness(&assignment, ecc.BN254.ScalarField())
 	publicWitness, err := witness.Public()
 
